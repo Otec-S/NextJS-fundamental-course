@@ -6,19 +6,29 @@ import { lusitana } from '@/app/ui/fonts';
 import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
 import { Suspense } from 'react';
 import { fetchInvoicesPages } from '@/app/lib/data';
- 
-export default async function Page(
-props: {
-  searchParams?: Promise<{
-    query?: string;
-    page?: string;
-  }>;
-}) {
+import { Metadata } from 'next';
 
-const searchParams = await props.searchParams;
-const query = searchParams?.query || '';
-const currentPage = Number(searchParams?.page) || 1;
-const totalPages = await fetchInvoicesPages(query);
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Acme SG Invoices',
+    default: 'Acme SG Invoices',
+  },
+  description: 'The official Next.js Learn Dashboard built with App Router.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+
+export default async function Page(
+  props: {
+    searchParams?: Promise<{
+      query?: string;
+      page?: string;
+    }>;
+  }) {
+
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
+  const totalPages = await fetchInvoicesPages(query);
 
   return (
     <div className="w-full">
@@ -29,7 +39,7 @@ const totalPages = await fetchInvoicesPages(query);
         <Search placeholder="Search invoices..." />
         <CreateInvoice />
       </div>
-       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
+      <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense>
       <div className="mt-5 flex w-full justify-center">
